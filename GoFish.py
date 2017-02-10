@@ -1,3 +1,5 @@
+from data_ball import DataBall
+
 class Opponent():
     def __init__(self, deck, difficulty, laidDown):
         self.deck = deck
@@ -113,6 +115,8 @@ HAND_SIZE = 7
 def main():
     #get the difficulty
     difficulty = int(input("Enter user difficulty (0 = easy, 1 = smart, 2 = devious): "))
+    dataBall = DataBall(difficulty)
+    dataBall.update()
     print("HI")
     #start creating all the objects
     stock = Deck()

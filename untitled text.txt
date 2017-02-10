@@ -1,1 +1,13 @@
-bloopers doopers
+So the Opponent class should be structured like this:
+
+It's initialized with a smaller deck of cards from the stock deck (7 to start, you don't
+need to worry about where it's coming from, though), a difficulty, and an (empty to start) 
+deck of books that have been laid down.
+
+The ask method is what needs to be changed:
+Check the GoFish file I uploaded a few days ago and complete the
+ask method. The ask method will return the opponent's guess. The guess should be based
+on difficulty, the contents of the opponent's deck, and the already laidDown books.
+For difficulties 1 and 2 (smart and devious), an instance variable recentCard should
+also be maintained so that the computer can make informed guesses, based on the most
+recent card obtained from going fish(ing)? 
