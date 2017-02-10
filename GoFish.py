@@ -113,7 +113,7 @@ HAND_SIZE = 7
 def main():
     #get the difficulty
     difficulty = int(input("Enter user difficulty (0 = easy, 1 = smart, 2 = devious): "))
-
+    print("HI")
     #start creating all the objects
     stock = Deck()
     stock.shuffle() #implement
