@@ -1,7 +1,6 @@
 
 import sqlite3
 import datetime
-
 class DataBall :
     
     """
@@ -137,7 +136,7 @@ class DataBall :
         self.conn.close()
         
         
-    def update(self,cards_on_req=0,empty_guess=True):
+    def update(self,cards_on_req=0):
         
         """
         Called at the end of each turn. Increments the turn count and adds to the
@@ -147,13 +146,11 @@ class DataBall :
         
           cards_on_req         int      add to the sum of cards recieved on request
           ------------------------------------------------------------------------
-          empty_guess         boolean   flag to count streaks of 0 cards recieved  
-          ------------------------------------------------------------------------
                           
         """
         
         # increment streak if guess is empty
-        if (empty_guess):
+        if (cards_on_req==0):
             self.empty_guesses += 1
         
         # otherwise check for a new max streak
