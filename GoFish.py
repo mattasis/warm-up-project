@@ -1,122 +1,16 @@
 from data_ball import DataBall
-
-class Opponent():
-    def __init__(self, deck, difficulty, laidDown):
-        self.deck = deck
-        self.difficulty = difficulty
-        self.laidDown = laidDown
-        self.books = 0
-        self.recentCard = None
-
-    ##depending on difficulty, the Opponent might lie       
-    def checkDeck(self, user_input):
-        return self.deck.hasCard(user_input)
-
-    ##depending on difficulty and recentCard, the opponent asks the user for a card
-    def ask():
-        return 2
-    
-class Card():
-    
-    ACE = 14
-    KING = 13
-    QUEEN = 12
-    JACK = 11
-    
-    SPADES = 0
-    CLUBS = 1
-    HEARTS = 2
-    DIAMONDS = 3
-    
-    def __init__(self, suit, rank):
-        self.suit = suit
-        self.rank = rank
-    def checkEquals(self, otherRank):
-        return self.rank == otherRank
-    
-    def toString(self):
-        formated_suit = ""
-        if (self.suit == Card.SPADES):
-            formated_suit = "Spades"
-        elif (self.suit == Card.CLUBS):
-            formated_suit = "Clubs"
-        elif (self.suit == Card.HEARTS):
-            formated_suit = "Hearts"
-        elif (self.suit == Card.DIAMONDS):
-            formated_suit = "Diamonds"
-        else:
-            formated_suit = "what"
-
-        formated_rank = ""
-        if (self.rank >= Card.JACK):
-            if (self.rank == Card.JACK):
-                formated_rank = "Jack"
-            elif (self.rank == Card.QUEEN):
-                formated_rank = "Queen"
-            elif (self.rank == Card.KING):
-                formated_rank = "King"
-            else:
-                formated_rank = "Ace"
-        else:
-            formated_rank = self.rank
-        output = str(formated_rank) + " of " + str(formated_suit)
-        return output
-                
-class Player():
-    def __init__(self, deck):
-        self.deck = deck
-        self.books = 0
-    def addBook(self):
-        self.books += 1
-
-#This class has list of cards, which it can manipulate with various methods.
-class Deck():
-    #this allows default construction, where 52 cards are added to a list, or it allows a list to be passed in
-    def __init__(self, i = None):
-        if i is None:
-            self.cards = []
-            for i in range(Card.DIAMONDS + 1):
-                for j in range(2, Card.ACE + 1):
-                    self.cards.append(Card(i, j))
-        else:
-            self.cards = i
-            
-    def hasCard(self, rank):
-        for i in range(len(self.cards)):
-            if(self.cards[i].checkEquals(rank)):
-                return True
-        return False
-        
-    def printDeck(self):
-        for i in range(len(self.cards)):
-            print(self.cards[i].toString())
-
-    ##removes all instances of rank and returns them in a list
-    def removeAll(self, rank):
-        return
-    
-    ##append newCards to this Deck's cards
-    def addCards(self, newCards):
-        return
-
-    ##checks to see if this Deck has four of the same rank card
-    def hasBook(self, rank):
-        return
-    ##count the occurrence of rank Card in the deck and returns it
-    def count(self, rank):
-        return
-    ##shuffle the deck
-    def shuffle(self):
-        return
-    
+from Game_Utilities import Card
+from Game_Utilities import Deck
+from Game_Utilities import Opponent
+from Game_Utilities import Player
 SENTINEL = "stop"
 HAND_SIZE = 7
 
 def main():
     #get the difficulty
     difficulty = int(input("Enter user difficulty (0 = easy, 1 = smart, 2 = devious): "))
-    dataBall = DataBall(difficulty)
-    dataBall.update()
+    #dataBall = DataBall(difficulty)
+    #dataBall.update()
     print("HI")
     #start creating all the objects
     stock = Deck()
