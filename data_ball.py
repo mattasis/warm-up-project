@@ -1,6 +1,7 @@
 
 import sqlite3
 import datetime
+
 class DataBall :
     
     """
@@ -83,9 +84,9 @@ class DataBall :
         self.top_empty_guess_ct = 0
     
     
-    ##############################################################################
-    ############################ In Game Methods #################################
-    ##############################################################################
+################################################################################
+############################## In Game Methods #################################
+################################################################################
     
     def close(self,win=0):
         
@@ -165,9 +166,9 @@ class DataBall :
         self.cards_per_request += cards_on_req
         self.turn_number += 1
     
-    ##############################################################################
-    ######################## Statistics Functions ################################
-    ##############################################################################
+################################################################################
+########################## Statistics Methods ##################################
+################################################################################
     
     def games_played(self,difficulties=[0,1,2]):
         """
@@ -409,8 +410,130 @@ class DataBall :
             
         return sum(streaks)/len(streaks)
             
+################################################################################
+############################### Print Methods ##################################                    
+################################################################################                    
+            
+    def stats_center(self):
+        """
+        A method to service statistics queries off the database. 
+        Validates input unless an egregious mistake is made, in which case
+        the statistics center is closed and the user is returned to the main loop
         
-                    
-                    
+        --ABOUT 60% FINISHED--
+        
+        Design:
+            
+            -Command line input from sequence of menus
+            -Enter query selections as comma separated list
+            -Enter difficulty domain as comma sep. list
+            -Displays stats in a pretty way then asks user if they want to
+                    -a see the menu again and query more stats
+                    -or return to home
+            
+            ** Stats are displayed by iterating through the queries list
+             and calling the menu_dict key associated with the query on 
+             the menu
+             
             
             
+            * 'query' = use statistics/database accessor functions
+        """
+        
+        title_str = "\n**Welcome to your Go Fish Statistics Center**\n"
+        menu      = "*-------------------------------------------*\n"+\
+                    "|                Stats Menu                 |\n"+\
+                    "|               ------------                |\n"+\
+                    "|-------------------------------------------|\n"+\
+                    "| 1 - Games Played                          |\n"+\
+                    "|-------------------------------------------|\n"+\
+                    "| 2 - Games Won by user                     |\n"+\
+                    "|-------------------------------------------|\n"+\
+                    "| 3 - Average cards dealt per turn          |\n"+\
+                    "|-------------------------------------------|\n"+\
+                    "| 4 - Longest/Shortest Game                 |\n"+\
+                    "|     - in time (by minutes, seconds, etc..)|\n"+\
+                    "|     - in turns                            |\n"+\
+                    "|-------------------------------------------|\n"+\
+                    "| 5 - Average number of turns per game      |\n"+\
+                    "|-------------------------------------------|\n"+\
+                    "| 6 - Longest # turns where no cards traded |\n"+\
+                    "|     - for current game                    |\n"+\
+                    "|     - out of all games                    |\n"+\
+                    "|-------------------------------------------|\n"+\
+                    "| 7 - Average # turns where no card traded  |\n"+\
+                    "|-------------------------------------------|\n"+\
+                    "| 8 - back to home                          |\n"+\
+                    "|                                           |\n"+\
+                    "*-------------------------------------------*"
+         
+        print(title_str)       
+        print(menu)
+        
+        try:
+            menu_choices = str(input("** Please enter query choices as comma separated list: "))
+        
+        except:
+            print('Oops! an error occurred, sending back to main menu')
+            return
+            
+        menu_choices = menu_choices.rstrip(")").lstrip("(")
+        queries      = list(set(int(q) for q in menu_choices.split(",")))
+
+        if 8 in queries:
+            if len(queries) != 1:
+                print("\nYou entered [ (8) - back to home ] as an option\n"+\
+                        "Would you like to go back now or after the other queries?")
+                
+                try:
+                    quit = int(input("Type 1 for 'now' or 2 for 'later' and press enter: "))
+                    
+                except:
+                    print('Oops! an error occurred, sending back to main menu')
+                    return
+                    
+                while quit not in [1,2]:
+                    
+                    try:
+                        quit = int(input("Woops! please enter 1 (quit now) or 2 (quit later): "))
+                    
+                    except:
+                        print('Oops! an error occurred, sending back to main menu')
+                        return
+                
+                if quit == 1:
+                    return
+                    
+                else:
+                    ind_8 = queries.index(8)
+                    temp = queries[len(queries)-1]
+                    queries[len(queries)-1] = 8
+                    queries[ind_8] = temp
+            
+            else:
+                return
+
+
+        
+        for i in range(len(queries)):
+            
+            while queries[i] not in [1,2,3,4,5,6,7,8]:
+                print("{} is not an option on the menu".format(queries[i]))
+                queries[i] = int(input("Enter and option on the menu: "))
+        
+        diffs        = str(input("** enter difficulties (comma separated) you want stats on: "))
+        diffs        = diffs.rstrip(")").lstrip("(")
+        diffs        = [int(d) for d in diffs.split(",")]
+
+        
+        menu_dict = {1:['games played',self.games_played(diffs)]}
+        
+        
+        
+        
+        
+                
+d= DataBall()
+d.close()
+d1=DataBall()
+d1.stats_center()
