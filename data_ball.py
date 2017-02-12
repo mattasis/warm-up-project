@@ -22,7 +22,6 @@ class DataBall :
         -Average time played per game
         -Longest streak of guesses resulting in 'Go Fish' (empty guesses)
             - out of all games
-            - for current game
             
         -Average value for longest streaks of empty guesses
        
@@ -33,7 +32,7 @@ class DataBall :
         """
         DataBall constructor, connect to the go_fish database, define a cursor,
         and get the start time of the game. Initialize several other fields used in the database.
-        
+        8
         Parameters:         data type   purpose
         
             difficulty         int      assign integer value to difficulty field
@@ -223,13 +222,6 @@ class DataBall :
             return self.games_won(difficulties)/self.games_played(difficulties)
         
         return (self.games_played(difficulties) - self.games_won(difficulties)/self.games_played(difficulties))
-    
-    def average_per_request(self):
-        """
-        Compute and return the average number of cards per request for the current game.
-        """
-        
-        return self.cards_per_request/self.turn_number
         
     def average_avg_per_req(self,difficulties=[0,1,2]):
         """
@@ -411,7 +403,7 @@ class DataBall :
         return sum(streaks)/len(streaks)
             
 ################################################################################
-############################### Print Methods ##################################                    
+############################ Statistics Center #################################                    
 ################################################################################                    
             
     def stats_center(self):
@@ -420,7 +412,7 @@ class DataBall :
         Validates input unless an egregious mistake is made, in which case
         the statistics center is closed and the user is returned to the main loop
         
-        --ABOUT 60% FINISHED--
+        --ABOUT 75% FINISHED--
         
         Design:
             
@@ -437,29 +429,29 @@ class DataBall :
              
             
             
-            * 'query' = use statistics/database accessor functions
+        So far i have finished valdating
         """
         
-        title_str = "\n**Welcome to your Go Fish Statistics Center**\n"
+        # opening header for stats center
+        title_str = "\n**Welcome to your Go Fish Statistics Center**\n"  
         menu      = "*-------------------------------------------*\n"+\
-                    "|                Stats Menu                 |\n"+\
+                    "|              *~Stats Menu~*               |\n"+\
                     "|               ------------                |\n"+\
                     "|-------------------------------------------|\n"+\
                     "| 1 - Games Played                          |\n"+\
                     "|-------------------------------------------|\n"+\
                     "| 2 - Games Won by user                     |\n"+\
                     "|-------------------------------------------|\n"+\
-                    "| 3 - Average cards dealt per turn          |\n"+\
+                    "| 3 - Average cards dealt per turn overall  |\n"+\
                     "|-------------------------------------------|\n"+\
-                    "| 4 - Longest/Shortest Game                 |\n"+\
-                    "|     - in time (by minutes, seconds, etc..)|\n"+\
-                    "|     - in turns                            |\n"+\
+                    "| 4 - Longest/Shortest Game in time         |\n"+\
+                    "|     - by minutes, seconds, etc..          |\n"+\
+                    "|     - by turns                            |\n"+\
                     "|-------------------------------------------|\n"+\
                     "| 5 - Average number of turns per game      |\n"+\
                     "|-------------------------------------------|\n"+\
                     "| 6 - Longest # turns where no cards traded |\n"+\
-                    "|     - for current game                    |\n"+\
-                    "|     - out of all games                    |\n"+\
+                    "|     out of all games                      |\n"+\
                     "|-------------------------------------------|\n"+\
                     "| 7 - Average # turns where no card traded  |\n"+\
                     "|-------------------------------------------|\n"+\
@@ -469,40 +461,181 @@ class DataBall :
          
         print(title_str)       
         print(menu)
-        
+        LONGEST_SHORTEST = 4
+        # attempt to get the desired menu choices of the user, validate the input
+        # in the case of an egregious exception, return to the main loop
         try:
             menu_choices = str(input("** Please enter query choices as comma separated list: "))
-        
-        except:
-            print('Oops! an error occurred, sending back to main menu')
-            return
+            # comes in as string representation of a tuple ^^ 
+                                                                            
+            menu_choices = menu_choices.rstrip(")").lstrip("(")  # <-- peel off ( and ) from tuple
             
-        menu_choices = menu_choices.rstrip(")").lstrip("(")
-        queries      = list(set(int(q) for q in menu_choices.split(",")))
+            # split into a list based on the ',' as a separating value,
+            # make set into iterable object (list)
+            queries = list(q for q in menu_choices.split(",")) 
+            
+            # validate the user's input
+            queries = self.validate_input(queries,'menu option')
+            
+            # remove duplicates
+            queries = list(set(q for q in queries))
+            
+            # if the user chose 8 (to return to home), find out if they want to
+            # do so now or after displaying all statistics
+            queries,ret = self.chosen_8(queries)
+            if (ret):
+                return
+                
+            if LONGEST_SHORTEST in queries:
+                print("You entered [ 4 - Longest/Shortest Game ]\n"+\
+                      "Do you want the longest game (1) or shortest game (2)")
+                superl = [input("Longest, shortest or both? : ")]
+                superl = self.validate_input(superl,'option')
+                
+                print("Do you want this in turns (1) or time (2)")
+                time_metric = [input("Turns or time? : ")]
+                time_metric = self.validate_input(time_metric,'option')
+                
+            #difficulty menu
+            diff_menu=  "\n"+\
+                        "*-------------------------------------------*\n"+\
+                        "|            *~Difficulty Menu~*            |\n"+\
+                        "|-------------------------------------------|\n"+\
+                        "|0 - Simple                                 |\n"+\
+                        "|-------------------------------------------|\n"+\
+                        "|1 - Smart                                  |\n"+\
+                        "|-------------------------------------------|\n"+\
+                        "|2 - Devious                                |\n"+\
+                        "*-------------------------------------------*"
+        
+            print(diff_menu)
+            # get the domain of difficulties user wants to get stats on
+            diffs = str(input("** enter difficulties (comma separated) you want stats on: "))
+            diffs = diffs.rstrip(")").lstrip("(")
+                
+            # split into list, validate input, and remove duplicates
+            diffs = diffs.split(',')
+            diffs = self.validate_input(diffs,'difficulty')
+            diffs = list(set(diffs))
+            
+            # difficulty map
+            difficulties = {0:'simple',1:'smart',2:'devious'}
+            times = {1:'turns',2:'time'}
+            
+            
+            ####"""K#IFEM# incomplete
+            options = {1:['game played',self.games_played(diffs)],
+                       2:['games won',self.games_won(diffs)],
+                       3:['average dealt per turn',self.average_avg_per_req(diffs)],
+                       4:['game length ({})'.format(times[time_metric]),self.superlative_game_len(time_metric,superl,diffs)]}
+                
+            
+        except Exception as e:
+            print('Oops! an error occurred, sending back to main menu...')
+            return
+        
+        
+        
+        
+        
+    def validate_input(self,elts,c):
+        """
+        Validate the elements of a list as integers.
+        
+        Parameters      data type       purpose
+        ------------------------------------------------------------------------
+         elts             list          the list of (string) elements to be verified as integers
+        ------------------------------------------------------------------------
+         c                string        either 'difficulty', 'menu option',
+                                        'option for returning',or 'option' used for formatting
+                                        the validation message and verifying input
+        
+        ** values of 'difficulty' and 'menu option' are self explanatory
+            'option for returning' --> validates input coming from chosen_8
+            'option' -> validates general input for the shortest/longest game in turns/time
+                                
+        """
+        
+        # choice dictionary used to format validation message
+        choices = {'difficulty':'0 and 2',
+                   'menu option':'1 and 8',
+                   'option for returning':'1 and 2',
+                   'option':'1 and 2'}
+        
+        # iterate throughout list
+        for i in range(len(elts)):
+            
+            #attempt to verify the element as integer
+            try:
+                
+                elts[i] = int(elts[i])
+                
+                # dictionary of conditions to be compared against the 
+                # elements that are not yet integers
+                #
+                # Ex:
+                # Suppose elts[i] = '12' and c = 'menu option'. 
+                #
+                # Then condits[c] = False. This will raise an
+                # exception, forcing a while loop (line 558) to get good input.
+            
+                condits = {'difficulty':elts[i] in [n for n in range(3)],
+                       'menu option':elts[i] in [n for n in range(1,9)],
+                       'option for return':elts[i] in [1,2],
+                       'option':elts[i] in [1,2]}
+                       
+                if condits[c]:
+                    pass
+                    
+                else:
+                    raise NameError
+                    
+            except NameError: # if element fails to be verified
 
+                while not condits[c]: # as long as the input is not valid, keep asking
+                                      # for input
+                    
+                    # formatted validation message
+                    print("{} is not an option. Choose a(n) {} between {}.".format(elts[i],c,choices[c]))
+                    
+                    # get more input
+                    elts[i] = str(input('Enter option : '))
+                    
+                    # update conditions dictionary
+                    condits = {'difficulty':elts[i] in [str(n) for n in range(3)],
+                       'menu option':elts[i] in [str(n) for n in range(1,9)],
+                       'option for return':elts[i] in ['1','2']}
+                       
+            # cast this validated input as an int
+            elts[i] = int(elts[i])
+        
+        return elts
+        
+    def chosen_8(self,queries):
+        
+        """
+        Find out if the return command (option 8) has been called off the menu. If so,
+        ask the user if they would like to display the statistics or go back to the home
+        loop.
+        
+        Parameters      data type       purpose
+
+        queries         list            the list of commands that may or may not 
+                                        contain 8
+        ------------------------------------------------------------------------
+        
+        """
         if 8 in queries:
             if len(queries) != 1:
                 print("\nYou entered [ (8) - back to home ] as an option\n"+\
                         "Would you like to go back now or after the other queries?")
                 
-                try:
-                    quit = int(input("Type 1 for 'now' or 2 for 'later' and press enter: "))
-                    
-                except:
-                    print('Oops! an error occurred, sending back to main menu')
-                    return
-                    
-                while quit not in [1,2]:
-                    
-                    try:
-                        quit = int(input("Woops! please enter 1 (quit now) or 2 (quit later): "))
-                    
-                    except:
-                        print('Oops! an error occurred, sending back to main menu')
-                        return
+                quit = [input("Type 1 for 'now' or 2 for 'later' and press enter: ")]
                 
-                if quit == 1:
-                    return
+                quit = self.validate_input(quit,'option for return')
+                
+                if quit[0] == 1:
+                    return queries,True
                     
                 else:
                     ind_8 = queries.index(8)
@@ -511,28 +644,10 @@ class DataBall :
                     queries[ind_8] = temp
             
             else:
-                return
-
-
+                return queries,True
         
-        for i in range(len(queries)):
-            
-            while queries[i] not in [1,2,3,4,5,6,7,8]:
-                print("{} is not an option on the menu".format(queries[i]))
-                queries[i] = int(input("Enter and option on the menu: "))
+        return queries,False
         
-        diffs        = str(input("** enter difficulties (comma separated) you want stats on: "))
-        diffs        = diffs.rstrip(")").lstrip("(")
-        diffs        = [int(d) for d in diffs.split(",")]
-
-        
-        menu_dict = {1:['games played',self.games_played(diffs)]}
-        
-        
-        
-        
-        
-                
 d= DataBall()
 d.close()
 d1=DataBall()
