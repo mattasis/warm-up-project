@@ -6,6 +6,10 @@ class Opponent():
         self.books = 0
         self.recentCard = None
 
+    #add a book
+    def addBook(self):
+        self.books += 1
+    
     ##depending on difficulty, the Opponent might lie       
     def checkDeck(self, user_input):
         return self.deck.hasCard(user_input)
@@ -31,6 +35,38 @@ class Card():
         self.rank = rank
     def checkEquals(self, otherRank):
         return self.rank == otherRank
+
+    def rankToString(self):
+        formated_rank = ""
+        if (self.rank == 2):
+            formated_rank = "two"
+        elif (self.rank == 3):
+            formated_rank = "three"
+        elif (self.rank == 4):
+            formated_rank = "four"
+        elif (self.rank == 5):
+            formated_rank = "five"
+        elif (self.rank == 6):
+            formated_rank = "six"
+        elif (self.rank == 7):
+            formated_rank = "seven"
+        elif (self.rank == 8):
+            formated_rank = "eight"
+        elif (self.rank == 9):
+            formated_rank = "nine"
+        elif (self.rank == 10):
+            formated_rank = "ten"
+        elif (self.rank == Card.JACK):
+            formated_rank = "jack"
+        elif (self.rank == Card.QUEEN):
+            formated_rank = "queen"
+        elif (self.rank == Card.KING):
+            formated_rank = "king"
+        elif (self.rank == Card.ACE):
+            formated_rank = "ace"
+        else:
+            formated_rank = "what"
+        return formated_rank
     
     def toString(self):
         formated_suit = ""
@@ -124,6 +160,14 @@ class Deck():
         return counter
 
         #fixed: compare cards[i] and rank with checkEquals
+
+    #adds a single card to this deck
+    def addCard(self, card):
+        self.cards.append(card)
+
+    #sorts card based on rank
+    def sort(self):
+        self.cards = sorted(self.cards, key=lambda card: card.rank)
     
     #randomizes the order of cards in the deck
     def shuffle(self):

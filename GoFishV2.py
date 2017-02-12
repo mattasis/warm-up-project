@@ -128,6 +128,9 @@ class Deck():
         return counter
 
         #fixed: compare cards[i] and rank with checkEquals
+
+    def sort(self):
+        self.cards = sorted(self.cards, key=lambda card: card.rank)
     
     #randomizes the order of cards in the deck
     def shuffle(self):
@@ -166,6 +169,10 @@ def test():
     deck.shuffle()
     deck.printDeck()
 
+    print("\nTesting sort:")
+    deck.sort()
+    deck.printDeck()
+    
     print("\nTesting dealTop:")
     newCard = deck.dealTop()
     print(newCard.toString(),"was dealt from the deck.")
